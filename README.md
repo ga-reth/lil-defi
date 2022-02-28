@@ -1,6 +1,6 @@
 # lil-defi
 
-lil-defi deconstructs popular defi protocols and dapps to their core, inspired by [lib-web3](https://github.com/m1guelpf/lil-web3) from [m1guel](https://twitter.com/m1guelpf). Developed and tested with DappTools as an exploration into this library as an alternative to hardhat.
+lil-defi is a repro that deconstructs popular defi protocols and dapps to their core, inspired by [lib-web3](https://github.com/m1guelpf/lil-web3) from [m1guel](https://twitter.com/m1guelpf). Developed and tested with DappTools as an exploration into this library as an alternative to hardhat.
 
 ## lil-smart-wallet
 
