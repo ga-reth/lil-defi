@@ -1,0 +1,4 @@
+testFail_withdraw() (gas: 8945)
+test_withdraw() (gas: 15910)
+test_withdrawAll() (gas: 23960)
+test_getBalance() (gas: 8701)
