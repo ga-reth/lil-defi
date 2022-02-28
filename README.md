@@ -18,4 +18,4 @@ The observation here is that we can quite easily check for owners of contracts +
 
 lil mev arbitrage explores a MEV strategy that extracts value via arbitrage across 2 liquidity pools - uniswap and sushi swap.
 
-[Contract Source](src/LilMEVArbitrage.sol) • [Contract Tests](src/LilMEVArbitrage.t.sol)
+soonTm
