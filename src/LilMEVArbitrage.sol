@@ -5,5 +5,11 @@ pragma solidity ^0.8.6;
 /// @author Gareth Veale
 /// @notice A very limited MEV contract to capitalise on arbitrage oppurtunities between uni + sushi swap
 contract LilMEVArbitrage { 
-    
+    address public factory;
+    uint constant
+
+    function arbitrage() external {}
+
+    function uniswapCall() external {}
+
 }
