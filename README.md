@@ -11,3 +11,11 @@ lil smart wallet is a simple demonstration of how a smart contract can be used a
 The observation here is that we can quite easily check for owners of contracts + validate callers of functions are authorised to do so. 
 
 [Contract Source](src/LilSmartWallet.sol) • [Contract Tests](src/LilSmartWallet.t.sol)
+
+## lil-mev-arbitrage
+
+> A very limited MEV contract to capitalise on arbitrage oppurtunities between uni + sushi swap
+
+lil mev arbitrage explores a MEV strategy that extracts value via arbitrage across 2 liquidity pools - uniswap and sushi swap.
+
+[Contract Source](src/LilMEVArbitrage.sol) • [Contract Tests](src/LilMEVArbitrage.t.sol)
