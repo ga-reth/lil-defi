@@ -19,3 +19,9 @@ The observation here is that we can quite easily check for owners of contracts +
 lil mev arbitrage explores a MEV strategy that extracts value via arbitrage across 2 liquidity pools - uniswap and sushi swap.
 
 soonTm
+
+## lil-uniswapv3
+
+> A very simple and limited adaptation of uniswap v3, built to deconstruct the protcol to it's barebones
+
+soonTm
