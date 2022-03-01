@@ -12,6 +12,15 @@ The observation here is that we can quite easily check for owners of contracts +
 
 [Contract Source](src/LilSmartWallet.sol) • [Contract Tests](src/LilSmartWallet.t.sol)
 
+## lil-uniswap
+
+> A very simple and limited adaptation of uniswap v3, built to deconstruct the protcol to it's barebones
+
+soonTm
+
+[Contract Source](src/LilUniswap.sol) • [Contract Tests](src/LilUniswap.t.sol)
+
+
 ## lil-mev-arbitrage
 
 > A very limited MEV contract to capitalise on arbitrage oppurtunities between uniswap + sushi swap
@@ -20,8 +29,3 @@ lil mev arbitrage explores a MEV strategy that extracts value via arbitrage acro
 
 soonTm
 
-## lil-uniswapv3
-
-> A very simple and limited adaptation of uniswap v3, built to deconstruct the protcol to it's barebones
-
-soonTm
