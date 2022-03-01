@@ -14,7 +14,7 @@ The observation here is that we can quite easily check for owners of contracts +
 
 ## lil-mev-arbitrage
 
-> A very limited MEV contract to capitalise on arbitrage oppurtunities between uniswap + sushi swap
+> A very limited MEV contract to explore how smart contracts can be used to capitalise on arbitrage oppurtunities between exchanges
 
 lil mev arbitrage explores a MEV strategy that extracts value via arbitrage across 2 liquidity pools - uniswap and sushi swap.
 
