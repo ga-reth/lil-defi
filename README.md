@@ -1,6 +1,6 @@
 # lil-defi
 
-lil-defi is a repro that deconstructs popular defi protocols and dapps to their core, inspired by [lib-web3](https://github.com/m1guelpf/lil-web3) from [m1guel](https://twitter.com/m1guelpf). Developed and tested with DappTools as an exploration into this library as an alternative to hardhat.
+lil-defi is a repro that deconstructs popular defi protocols and dapps to their core, inspired by [lil-web3](https://github.com/m1guelpf/lil-web3) from [m1guel](https://twitter.com/m1guelpf). Developed and tested with DappTools as an exploration into this library as an alternative to hardhat.
 
 ## lil-smart-wallet
 
@@ -23,9 +23,9 @@ soonTm
 
 ## lil-mev-arbitrage
 
-> A very limited MEV contract to capitalise on arbitrage oppurtunities between uniswap + sushi swap
+> A very limited MEV contract to explore how smart contracts can be used to capitalise on arbitrage oppurtunities between exchanges
 
-lil mev arbitrage explores a MEV strategy that extracts value via arbitrage across 2 liquidity pools - uniswap and sushi swap.
+lil mev arbitrage explores a MEV strategy that extracts value via arbitrage across 2 example liquidity pools from uniswap and sushi swap
 
 soonTm
 

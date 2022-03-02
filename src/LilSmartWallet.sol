@@ -19,7 +19,7 @@ contract LilSmartWallet {
     /// @notice Fallback receive function
     receive() external payable {}
 
-    /// @notice Withdraw funds from smart wallet to provided address
+    /// @notice Withdraws funds from smart wallet to provided address
     /// @param _amount The amount to be withdrawn
     function withdraw(uint _amount) external {
         require(msg.sender == owner, "Access denied!");
@@ -36,7 +36,7 @@ contract LilSmartWallet {
          payable(msg.sender).transfer(address(this).balance);
     }
 
-    /// @notice Return the balance held in this smart wallet
+    /// @notice Returns the balance held in this smart wallet
     function getBalance() external view returns (uint) {
         require(msg.sender == owner, "Access denied!");
         return address(this).balance;
