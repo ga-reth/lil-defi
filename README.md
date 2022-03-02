@@ -14,7 +14,7 @@ The observation here is that we can quite easily check for owners of contracts +
 
 ## lil-uniswap
 
-> A very simple and limited adaptation of uniswap v3, built to deconstruct the protcol to it's barebones
+> A very simple and limited adaptation of uniswap, built to deconstruct the protcol to it's barebones to understand how it functions
 
 soonTm
 
