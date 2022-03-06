@@ -6,7 +6,6 @@ pragma solidity ^0.8.6;
 /// @notice An incredibly simplified adaptation of uniswap
 contract LilUniswap { 
     
-    ///
     address public owner;
     mapping(address => mapping(address => mapping(uint24 => address))) public getPoolAddress;
     struct Parameters {
@@ -14,7 +13,6 @@ contract LilUniswap {
         address token0;
         address token1;
         uint24 fee;
-        int24 tickSpacing;
     }
     Parameters public params;
 
@@ -25,8 +23,8 @@ contract LilUniswap {
     // factory + pool deployer
     function createPool() external returns (address pool) {}
 
-    function deploy(address token0, address token1, uint24 fee, int24 tickSpacing) internal returns (address pool) {
-        params = Parameters({lilUniswap: address(this), token0: token0, token1: token1, fee: fee, tickSpacing: tickSpacing});
+    function deploy(address token0, address token1, uint24 fee) internal returns (address pool) {
+        params = Parameters({lilUniswap: address(this), token0: token0, token1: token1, fee: fee});
         pool = address(new LilUniswapPool{salt: keccak256(abi.encode(token0, token1, fee))}());
         delete params;
     }
@@ -63,8 +61,7 @@ contract LilUniswapPool {
     }
 
     constructor() {
-        int24 _tickSpacing;
-        (lilUniswap, token0, token1, fee, _tickSpacing) = LilUniswap(msg.sender).params();
+        (lilUniswap, token0, token1, fee) = LilUniswap(msg.sender).params();
     }
 
     function initialize() external {}
