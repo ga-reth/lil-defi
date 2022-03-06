@@ -8,7 +8,7 @@ lil-defi is a repro that deconstructs popular defi protocols and dapps to their 
 
 lil smart wallet is a simple demonstration of how a smart contract can be used as a wallet.
 
-The observation here is that we can quite easily check for owners of contracts + validate callers of functions are authorised to do so. 
+The observation here is that we can quite simply check owners of contracts + validate callers of functions.
 
 [Contract Source](src/LilSmartWallet.sol) • [Contract Tests](src/LilSmartWallet.t.sol)
 
