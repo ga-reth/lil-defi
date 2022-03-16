@@ -1,46 +1,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.6;
-    
+
 /// @title lil uniswap
 /// @author Gareth Veale
 /// @notice An incredibly simplified adaptation of uniswap
 contract LilUniswap { 
     
     address public owner;
-    mapping(address => mapping(address => mapping(uint24 => address))) public getPoolAddress;
+    mapping(address => mapping(address => address)) public getPoolAddress;
     struct Parameters {
         address lilUniswap;
         address token0;
         address token1;
-        uint24 fee;
     }
     Parameters public params;
+    event PoolCreated(address token0, address token1, address pool);
 
     constructor() {
         owner = msg.sender;
     }
 
-    // factory + pool deployer
-    function createPool() external returns (address pool) {}
-
-    function deploy(address token0, address token1, uint24 fee) internal returns (address pool) {
-        params = Parameters({lilUniswap: address(this), token0: token0, token1: token1, fee: fee});
-        pool = address(new LilUniswapPool{salt: keccak256(abi.encode(token0, token1, fee))}());
-        delete params;
+    function createPool(address tokenA, address tokenB) external returns (address pool) {
+        require(tokenA != tokenB);
+        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        require(token0 != address(0));
+        require(getPoolAddress[token0][token1] == address(0));
+        pool = deploy(token0, token1);
+        getPoolAddress[token0][token1] = pool;
+        getPoolAddress[token1][token0] = pool;
+        emit PoolCreated(token0, token1, pool);
     }
 
-    function setOwner() external {}
-    
-    // swap router
-    function getPool() private view returns (address pool) {}
-
-    function uniswapV3SwapCallback() external {}
-
-    /// swaps amountIn of one token for as much as possible of another token
-    function swapExactInput() external returns (uint256 amountOut) {}
-
-    /// swaps as little as possible of one token for amountOut of another token
-    function swapExactOuput() external returns (uint256 amountIn) {}
+    function deploy(address token0, address token1) internal returns (address pool) {
+        params = Parameters({lilUniswap: address(this), token0: token0, token1: token1});
+        pool = address(new LilUniswapPool{salt: keccak256(abi.encode(token0, token1))}());
+        delete params;
+    }
 
 }
 
@@ -49,56 +44,56 @@ contract LilUniswapPool {
     address public immutable lilUniswap;
     address public immutable token0;
     address public immutable token1;
-    uint24 public immutable fee;
-    bool private unlocked = true;
-    // uint128 public immutable maxLiquidityPerTick;
+    mapping(bytes32 => Position.Info) public override positions;
 
-    modifier lock() {
-        require(unlocked==true, 'locked');
-        unlocked = false;
-        _;
-        unlocked = true;
-    }
+    event Mint(address sender, address recipient, uint128 amount, uint256 amount0, uint256 amount1);
+    event Collect(address sender, address recipient, uint256 amount0, uint256 amount1);
 
     constructor() {
-        (lilUniswap, token0, token1, fee) = LilUniswap(msg.sender).params();
+        (lilUniswap, token0, token1) = LilUniswap(msg.sender).params();
     }
 
-    function initialize() external {}
-    function balance0() private view returns (uint256) {}
-    function balance1() private view returns (uint256) {}
-    function mint() external lock returns (uint256 amount0, uint256 amount1) {}
-    function collect() external lock returns (uint128 amount0, uint128 amount1) {}
-    function burn() external lock returns (uint256 amount0, uint256 amount1) {}
-    function swap() external returns (int256 amount0, int256 amount1) {}
-    function flash() external lock {}
+    function mint(address recipient, uint128 amount, bytes calldata data) external returns (uint256 amount0, uint256 amount1) {
+        require(amount > 0);
+        (amount0, amount1) = _modifyPosition(recipient, amount);
+        ILilUniSwap(msg.sender).uniswapV3MintCallback(amount0, amount1, data);
+        emit Mint(msg.sender, recipient, amount, amount0, amount1);
+    }
 
+    /// TODO
+    function swap(address recipient, int256 amountSpecified, bytes calldata data) external returns (int256 amount0, int256 amount1) {}
+
+    function collect(address recipient, uint128 amount0Requested, uint128 amount1Requested) external {
+        Position.Info storage position = positions.get(msg.sender);
+
+        amount0 = amount0Requested > position.tokensOwed0 ? position.tokensOwed0 : amount0Requested;
+        amount1 = amount1Requested > position.tokensOwed1 ? position.tokensOwed1 : amount1Requested;
+
+        if (amount0 > 0) {
+            position.tokensOwed0 -= amount0;
+            token0.transfer(recipient, amount0);
+        }
+        if (amount1 > 0) {
+            position.tokensOwed1 -= amount1;
+            token1.transfer(recipient, amount1);
+        }
+
+        emit Collect(msg.sender, recipient, amount0, amount1);
+    }
+
+    /// TODO
+    function _modifyPosition(address owner, uint128 liquidityDelta) private returns (uint256 amount0, uint256 amount1) {
+        if (liquidityDelta != 0) {
+
+        }
+    } 
 }
 
+contract ILilUniSwap {
 
+    /// TODO
+    function uniswapV3MintCallback(uint256 amount0, uint256 amount1, bytes calldata data) public {}
+    /// TODO
+    function uniswapV3SwapCallback() public {}
 
-
-// uniswap is a an AMM - automated market maker
-    // achieves this by creating pools, containing token pairs
-
-////  CORE ////
-
-    // UniswapV3Pool - contract that defines the pools
-        // liquidity pools that can be used to swap tokens
-        // a pool is defined by 2 tokens + a fee
-        // 2 tokens can have >1 pool, distinguished only be fee
-
-    // UniswapV3PoolDeployer - logic to deploy pool contract instance
-
-    // UniswapV3Factory - defines logic for deploying pools + manages ownership/control over pool protocol fees
-
-
-//// PERIPHERY ////
-    
-    // SwapRouter - defines logic for executing swaps against uniswap v3
-        // supports basic requirements of a front-end offering trading
-
-    // NonfungiblePositionManager - defines logic that can wrap uniswap v3 positions in an ERC721 token
-
-    // NonfungibleTokenPositionDescriptor - 
-
+}
