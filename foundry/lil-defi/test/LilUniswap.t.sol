@@ -1,9 +1,8 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity ^0.8.6;
+// SPDX-License-Identifier: AGPL-3.0-only
+pragma solidity ^0.8.13;
 
-import "ds-test/test.sol";
-
-import "./LilUniswap.sol";
+import "forge-std/Test.sol";
+import "../src/LilUniswap.sol";
 
 contract LilUniswapTest is DSTest {
     LilUniswap uniswap;
@@ -11,5 +10,4 @@ contract LilUniswapTest is DSTest {
     function setUp() public {
         uniswap = new LilUniswap();
     }
-
 }
