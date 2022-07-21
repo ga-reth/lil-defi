@@ -9,52 +9,67 @@ pragma solidity ^0.8.6;
 
 /// @title lil uniswap
 /// @author Gareth Veale
-/// @notice An incredibly simplified adaptation of uniswap
+/// @notice An incredibly simplified adaptation of uniswap, do
 contract LilUniswap {
     address public owner;
-    mapping(address => mapping(address => address)) public getPoolAddress;
+    mapping(address => mapping(address => mapping(uint256 => address)))
+        public getPoolAddress;
     struct Parameters {
         address lilUniswap;
         address token0;
         address token1;
-        // uint fee;
-        // uint tickSpacing;
+        uint256 fee;
     }
     Parameters public params;
-    event PoolCreated(address token0, address token1, address pool);
+    event PoolCreated(
+        address token0,
+        address token1,
+        address pool,
+        uint256 fee
+    );
 
     constructor() {
         owner = msg.sender;
     }
 
-    function createPool(address tokenA, address tokenB)
-        external
-        returns (address pool)
-    {
+    /// @notice Creates an instance of LilUniswapPool for a pair of 2 tokens
+    /// @param tokenA The first token of the pool
+    /// @param tokenB The second token of the pool
+    /// @param fee The fee collected upon every swap in the pool
+    function createPool(
+        address tokenA,
+        address tokenB,
+        uint256 fee
+    ) external returns (address pool) {
         require(tokenA != tokenB);
         (address token0, address token1) = tokenA < tokenB
             ? (tokenA, tokenB)
             : (tokenB, tokenA);
         require(token0 != address(0));
-        require(getPoolAddress[token0][token1] == address(0));
-        require(getPoolAddress[token1][token0] == address(0));
-        pool = deploy(token0, token1);
-        getPoolAddress[token0][token1] = pool;
-        getPoolAddress[token1][token0] = pool;
-        emit PoolCreated(token0, token1, pool);
+        require(getPoolAddress[token0][token1][fee] == address(0));
+        pool = deploy(token0, token1, fee);
+        getPoolAddress[token0][token1][fee] = pool;
+        // populate mapping in the reverse direction, deliberate choice to avoid the cost of comparing addresses
+        getPoolAddress[token1][token0][fee] = pool;
+        emit PoolCreated(token0, token1, pool, fee);
     }
 
-    function deploy(address token0, address token1)
-        internal
-        returns (address pool)
-    {
+    /// @notice Deploys an instance of LilUniswapPool for a pair of 2 tokens
+    function deploy(
+        address token0,
+        address token1,
+        uint256 fee
+    ) internal returns (address pool) {
         params = Parameters({
             lilUniswap: address(this),
             token0: token0,
-            token1: token1
+            token1: token1,
+            fee: fee
         });
         pool = address(
-            new LilUniswapPool{salt: keccak256(abi.encode(token0, token1))}()
+            new LilUniswapPool{
+                salt: keccak256(abi.encode(token0, token1, fee))
+            }()
         );
         delete params;
     }
@@ -72,6 +87,7 @@ contract LilUniswapPool {
     address public immutable lilUniswap;
     address public immutable token0;
     address public immutable token1;
+    uint256 public immutable fee;
     mapping(address => PositionInfo) public positions;
 
     event Mint(
@@ -89,7 +105,7 @@ contract LilUniswapPool {
     );
 
     constructor() {
-        (lilUniswap, token0, token1) = LilUniswap(msg.sender).params();
+        (lilUniswap, token0, token1, fee) = LilUniswap(msg.sender).params();
     }
 
     function mint(
