@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.6;
 
-// todo
-// maybe remove pool deployer etc
-// swap
-// collect
-// mint
+import "./interfaces/ILilUniSwap.sol";
 
 /// @title lil uniswap
 /// @author Gareth Veale
@@ -84,11 +80,30 @@ contract LilUniswapPool {
         uint256 tokensOwed1;
     }
 
+    struct ModifyPositionParams {
+        // the address that owns the position
+        address owner;
+        // any change in liquidity
+        int128 liquidityDelta;
+    }
+
+    // struct ProtocolFees {
+    //     uint128 token0;
+    //     uint128 token1;
+    // }
+    // ProtocolFees public override protocolFees;
+
     address public immutable lilUniswap;
     address public immutable token0;
     address public immutable token1;
     uint256 public immutable fee;
     mapping(address => PositionInfo) public positions;
+
+    /// @dev Prevents calling a function from anyone except the address returned by ILilUniSwap#owner()
+    modifier onlyOwner() {
+        require(msg.sender == ILilUniSwap(lilUniswap).owner());
+        _;
+    }
 
     event Mint(
         address sender,
@@ -97,6 +112,7 @@ contract LilUniswapPool {
         int256 amount0,
         int256 amount1
     );
+
     event Collect(
         address sender,
         address recipient,
@@ -107,6 +123,10 @@ contract LilUniswapPool {
     constructor() {
         (lilUniswap, token0, token1, fee) = LilUniswap(msg.sender).params();
     }
+
+    function balance0() external {}
+
+    function balance1() external {}
 
     function mint(
         address recipient,
@@ -170,33 +190,7 @@ contract LilUniswapPool {
         private
         returns (int256 amount0, int256 amount1)
     {}
-}
 
-interface ILilUniSwap {
-    /// @notice Called to `msg.sender` after minting liquidity to a position from LilUniswapPool#mint.
-    /// @dev In the implementation you must pay the pool tokens owed for the minted liquidity.
-    /// The caller of this method must be checked to be a LilUniswapPool.
-    /// @param amount0Owed The amount of token0 due to the pool for the minted liquidity
-    /// @param amount1Owed The amount of token1 due to the pool for the minted liquidity
-    /// @param data Any data passed through by the caller via the #mint call
-    function uniswapV3MintCallback(
-        int256 amount0Owed,
-        int256 amount1Owed,
-        bytes calldata data
-    ) external;
-
-    /// @notice Called to `msg.sender` after executing a swap via LilUniswapPool#swap.
-    /// @dev In the implementation you must pay the pool tokens owed for the swap.
-    /// The caller of this method must be checked to be a LilUniswapPool.
-    /// amount0Delta and amount1Delta can both be 0 if no tokens were swapped.
-    /// @param amount0Delta The amount of token0 that was sent (negative) or must be received (positive) by the pool by
-    /// the end of the swap. If positive, the callback must send that amount of token0 to the pool.
-    /// @param amount1Delta The amount of token1 that was sent (negative) or must be received (positive) by the pool by
-    /// the end of the swap. If positive, the callback must send that amount of token1 to the pool.
-    /// @param data Any data passed through by the caller via the #swap call
-    function uniswapV3SwapCallback(
-        int256 amount0Delta,
-        int256 amount1Delta,
-        bytes calldata data
-    ) external;
+    /// TODO
+    function collectProtocol() external {}
 }

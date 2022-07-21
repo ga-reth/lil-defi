@@ -6,7 +6,7 @@ lil-defi is a repro that deconstructs popular defi protocols and dapps to their 
 
 > A very simple and limited adaptation of uniswap, built to deconstruct the protcol to it's barebones to understand how it functions
 
-Uniswap/defi maxis will berate me for ignoring fees and tick spacing, since they're core to uniswap, but given the nature of this project, I excluded them for simplicity. The two contracts are intended to divide the logic appropriately, `LilUniswap` acts as the central contract, allowing the creation and deployment of token pools. `LilUniswapPool` represent the liquidity pools for each token pair and contain the logic for interacting with them.
+V3 maxis will note I ignored tick spacing/concentrated liquidity, but given the nature of this project, I excluded them for simplicity. The two contracts are intended to divide the logic appropriately, `LilUniswap` acts as the central contract (`UniswapFactoryV3Factory`), allowing the creation and deployment of token pools. `LilUniswapPool` represents the liquidity pools for each token pair and contains the logic for interacting with them.
 
 [Contract Source](src/LilUniswap.sol) • [Contract Tests](src/LilUniswap.t.sol)
 
