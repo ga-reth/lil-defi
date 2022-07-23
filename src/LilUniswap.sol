@@ -84,14 +84,8 @@ contract LilUniswapPool {
         // the address that owns the position
         address owner;
         // any change in liquidity
-        int128 liquidityDelta;
+        int256 liquidityDelta;
     }
-
-    // struct ProtocolFees {
-    //     uint128 token0;
-    //     uint128 token1;
-    // }
-    // ProtocolFees public override protocolFees;
 
     address public immutable lilUniswap;
     address public immutable token0;
@@ -99,16 +93,10 @@ contract LilUniswapPool {
     uint256 public immutable fee;
     mapping(address => PositionInfo) public positions;
 
-    /// @dev Prevents calling a function from anyone except the address returned by ILilUniSwap#owner()
-    modifier onlyOwner() {
-        require(msg.sender == ILilUniSwap(lilUniswap).owner());
-        _;
-    }
-
     event Mint(
         address sender,
         address recipient,
-        uint256 amount,
+        int256 amount,
         int256 amount0,
         int256 amount1
     );
@@ -124,20 +112,21 @@ contract LilUniswapPool {
         (lilUniswap, token0, token1, fee) = LilUniswap(msg.sender).params();
     }
 
-    function balance0() external {}
-
-    function balance1() external {}
-
+    /// @notice mint a new position in the pool (LP's)
     function mint(
-        address recipient,
-        uint256 amount,
-        bytes calldata data
+        address _recipient,
+        int256 _amount,
+        bytes calldata _data
     ) external returns (int256 amount0, int256 amount1) {
-        require(amount > 0);
-        (amount0, amount1) = _modifyPosition(recipient, amount);
-        ILilUniSwap(msg.sender).uniswapV3MintCallback(amount0, amount1, data);
+        require(_amount > 0);
 
-        emit Mint(msg.sender, recipient, amount, amount0, amount1);
+        (amount0, amount1) = _modifyPosition(
+            ModifyPositionParams({owner: _recipient, liquidityDelta: _amount})
+        );
+
+        ILilUniSwap(msg.sender).uniswapV3MintCallback(amount0, amount1, _data);
+
+        emit Mint(msg.sender, _recipient, _amount, amount0, amount1);
     }
 
     function collect(
@@ -156,26 +145,15 @@ contract LilUniswapPool {
             ? position.tokensOwed1
             : amount1Requested;
 
-        if (amount0 > 0) {
-            position.tokensOwed0 -= amount0;
-            transferOut(token0, recipient, amount0);
-        }
-        if (amount1 > 0) {
-            position.tokensOwed1 -= amount1;
-            transferOut(token1, recipient, amount1);
-        }
+        // if (amount0 > 0) {
+        //     transferOut(token0, recipient, amount0);
+        // }
+        // if (amount1 > 0) {
+        //     position.tokensOwed1 -= amount1;
+        //     transferOut(token1, recipient, amount1);
+        // }
 
         emit Collect(msg.sender, recipient, amount0, amount1);
-    }
-
-    // TODO
-    function transferOut(
-        address token,
-        address to,
-        uint256 amount
-    ) public {
-        // need to inherit ERC20 for token0 and token1 such the transfer function is called on ERC20 contract
-        // token.transfer(to, amount);
     }
 
     /// TODO
@@ -185,12 +163,9 @@ contract LilUniswapPool {
         bytes calldata data
     ) external returns (int256 amount0, int256 amount1) {}
 
-    /// TODO
-    function _modifyPosition(address owner, uint256 liquidityDelta)
+    /// TODO - check v2
+    function _modifyPosition(ModifyPositionParams memory params)
         private
         returns (int256 amount0, int256 amount1)
     {}
-
-    /// TODO
-    function collectProtocol() external {}
 }
