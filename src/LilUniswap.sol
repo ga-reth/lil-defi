@@ -2,6 +2,7 @@
 pragma solidity ^0.8.6;
 
 import "./interfaces/ILilUniSwap.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
 /// @title lil uniswap
 /// @author Gareth Veale
